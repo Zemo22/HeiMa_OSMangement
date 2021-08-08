@@ -20,6 +20,8 @@
           active-text-color="#409EFF"
           :collapse="isCollapse"
           :collapse-transition="false"
+          router
+          :default-active="activePath"
         >
           <!-- First level menu -->
           <el-submenu
@@ -33,9 +35,10 @@
             </template>
             <!-- Second level menu -->
             <el-menu-item
-              :index="subItem.id + {}"
+              :index="'/' + subItem.path"
               v-for="subItem in item.children"
               :key="subItem.id"
+              @click="saveNaveState('/' + subItem.path)"
             >
               <template #title>
                 <i class="el-icon-menu"></i>
@@ -46,7 +49,9 @@
         </el-menu>
       </el-aside>
       <!-- Main -->
-      <el-main>Main</el-main>
+      <el-main>
+        <router-view> </router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -63,7 +68,11 @@ export default {
         102: 'iconfont icon-danju',
         145: 'iconfont icon-baobiao',
       },
+      //isCollapse side bar
       isCollapse: false,
+
+      //active path
+      activePath: '',
     }
   },
   methods: {
@@ -81,9 +90,15 @@ export default {
     toggleCollapse() {
       this.isCollapse = !this.isCollapse
     },
+    //save the activate path
+    saveNaveState(activePath) {
+      window.sessionStorage.setItem('activePath', activePath)
+      this.activePath = activePath
+    },
   },
   created() {
     this.getMenuList()
+    this.activePath = window.sessionStorage.getItem('activePath')
   },
 }
 </script>
