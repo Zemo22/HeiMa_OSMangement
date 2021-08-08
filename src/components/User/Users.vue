@@ -78,6 +78,7 @@
                 type="warning"
                 icon="el-icon-setting"
                 size="small"
+                @click="setRole(scope.row)"
               ></el-button>
             </el-tooltip>
           </template>
@@ -94,71 +95,101 @@
         :total="total"
       >
       </el-pagination>
-
-      <!-- Dialog for Adding User -->
-      <el-dialog
-        title="ADD User"
-        :visible="addDialogVisible"
-        width="50%"
-        @close="addDialogClosed"
-      >
-        <!-- Content Area -->
-        <el-form
-          :model="addForm"
-          :rules="addFormRules"
-          ref="addFormRef"
-          label-width="100px"
-        >
-          <el-form-item label="Username" prop="username">
-            <el-input v-model="addForm.username"></el-input>
-          </el-form-item>
-          <el-form-item label="Password" prop="password">
-            <el-input v-model="addForm.password"></el-input>
-          </el-form-item>
-          <el-form-item label="Mail" prop="email">
-            <el-input v-model="addForm.email"></el-input>
-          </el-form-item>
-          <el-form-item label="Mobile" prop="mobile">
-            <el-input v-model="addForm.mobile"></el-input>
-          </el-form-item>
-        </el-form>
-        <!-- Footer Area -->
-        <template #footer>
-          <span class="dialog-footer">
-            <el-button @click="addDialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="addUser">确 定</el-button>
-          </span>
-        </template>
-      </el-dialog>
-
-      <!-- Dialog for Edit User -->
-
-      <el-dialog title="Edit User" :visible="editDialogVisible" width="50%">
-        <el-form
-          :model="editForm"
-          :rules="editFormRules"
-          ref="editFormRef"
-          label-width="100px"
-          @close="editDialogClosed"
-        >
-          <el-form-item label="Username">
-            <el-input v-model="editForm.username" disabled></el-input>
-          </el-form-item>
-          <el-form-item label="Email" prop="email">
-            <el-input v-model="editForm.email"></el-input>
-          </el-form-item>
-          <el-form-item label="mobile" prop="mobile">
-            <el-input v-model="editForm.mobile"></el-input>
-          </el-form-item>
-        </el-form>
-        <template #footer>
-          <span class="dialog-footer">
-            <el-button @click="editDialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="editUserInfo">确 定</el-button>
-          </span>
-        </template>
-      </el-dialog>
     </el-card>
+
+    <!-- Dialog for Adding User -->
+    <el-dialog
+      title="ADD User"
+      :visible="addDialogVisible"
+      width="50%"
+      @close="addDialogClosed"
+    >
+      <!-- Content Area -->
+      <el-form
+        :model="addForm"
+        :rules="addFormRules"
+        ref="addFormRef"
+        label-width="100px"
+      >
+        <el-form-item label="Username" prop="username">
+          <el-input v-model="addForm.username"></el-input>
+        </el-form-item>
+        <el-form-item label="Password" prop="password">
+          <el-input v-model="addForm.password"></el-input>
+        </el-form-item>
+        <el-form-item label="Mail" prop="email">
+          <el-input v-model="addForm.email"></el-input>
+        </el-form-item>
+        <el-form-item label="Mobile" prop="mobile">
+          <el-input v-model="addForm.mobile"></el-input>
+        </el-form-item>
+      </el-form>
+      <!-- Footer Area -->
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="addDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="addUser">确 定</el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <!-- Dialog for Edit User -->
+    <el-dialog title="Edit User" :visible="editDialogVisible" width="50%">
+      <el-form
+        :model="editForm"
+        :rules="editFormRules"
+        ref="editFormRef"
+        label-width="100px"
+        @close="editDialogClosed"
+      >
+        <el-form-item label="Username">
+          <el-input v-model="editForm.username" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="Email" prop="email">
+          <el-input v-model="editForm.email"></el-input>
+        </el-form-item>
+        <el-form-item label="mobile" prop="mobile">
+          <el-input v-model="editForm.mobile"></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="editDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="editUserInfo">确 定</el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <!-- Dialog for assign Role -->
+    <el-dialog
+      title="Assign Role"
+      :visible="setRoleDialogVisible"
+      width="50%"
+      @close="setRoleDialogClosed"
+    >
+      <div>
+        <p>Usernaem:{{ userInfo.username }}</p>
+        <p>Role:{{ userInfo.role_name }}</p>
+        <p>
+          Assign New Role:
+          <el-select v-model="selectedRoleId" placeholder="请选择">
+            <el-option
+              v-for="item in roleList"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
+        </p>
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="setRoleDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="saveRoleInfo">确 定</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -247,6 +278,10 @@ export default {
           { validator: checkMobile, trigger: 'blur' },
         ],
       },
+      setRoleDialogVisible: false,
+      userInfo: {},
+      roleList: [],
+      selectedRoleId: '',
     }
   },
   methods: {
@@ -356,8 +391,38 @@ export default {
 
       console.log(confirmResult)
     },
-  },
+    async setRole(userInfo) {
+      this.userInfo = userInfo
+      const { data: res } = await this.$http.get(`roles`)
+      if (res.meta.status !== 200)
+        return this.$message.error('Failed to Get Role')
+      this.roleList = res.data
+      console.log(this.roleList)
+      this.setRoleDialogVisible = true
+    },
+    async saveRoleInfo() {
+      if (!this.selectedRoleId)
+        return this.$message.error('Failed to Edit Role1')
+      console.log(this.selectedRoleId)
+      const { data: res } = await this.$http.put(
+        `users/${this.userInfo.id}/role`,
+        {
+          rid: this.selectedRoleId,
+        }
+      )
+      console.log(res)
+      if (res.meta.status !== 200)
+        return this.$message.error('Failed to Edit Role2')
 
+      this.$message.success('Successed to Edit Role')
+      this.getUserList()
+      this.setRoleDialogVisible = false
+    },
+    setRoleDialogClosed() {
+      this.selectedRoleId = ''
+      this.userInfo = {}
+    },
+  },
   created() {
     this.getUserList()
   },
