@@ -404,6 +404,7 @@ export default {
       if (!this.selectedRoleId)
         return this.$message.error('Failed to Edit Role1')
       console.log(this.selectedRoleId)
+      console.log(this.userInfo.id)
       const { data: res } = await this.$http.put(
         `users/${this.userInfo.id}/role`,
         {
