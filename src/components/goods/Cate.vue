@@ -95,7 +95,6 @@
             :props="cascaderProps"
             @change="parentCastChanged"
             clearable
-            change-on-select
           ></el-cascader>
         </el-form-item>
       </el-form>
