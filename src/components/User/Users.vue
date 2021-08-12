@@ -227,7 +227,7 @@ export default {
         pagenum: 1,
         pagesize: 2,
       },
-      userList: {},
+      userList: [],
       total: 0,
       addDialogVisible: false,
       //Form data to add new user
@@ -294,6 +294,7 @@ export default {
         return this.$message.error('Failed to get User List')
 
       this.userList = res.data.users
+      console.log(this.userList)
       this.total = res.data.total
     },
     handleSizeChange(newSize) {

@@ -9,7 +9,8 @@ import {
   Switch, Tooltip, Pagination,
   Dialog, MessageBox, Tag, Tree,
   Select, Option, Cascader, Alert,
-  Tabs, TabPane
+  Tabs, TabPane, Step, Steps, CheckboxGroup,
+  Checkbox, Upload
 } from 'element-ui'
 
 Vue.use(Button)
@@ -42,6 +43,11 @@ Vue.use(Cascader)
 Vue.use(Alert)
 Vue.use(Tabs)
 Vue.use(TabPane)
+Vue.use(Step)
+Vue.use(Steps)
+Vue.use(CheckboxGroup)
+Vue.use(Checkbox)
+Vue.use(Upload)
 
 
 
